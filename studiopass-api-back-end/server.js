@@ -7,6 +7,7 @@ const cors = require("cors");
 const logger = require("morgan");
 const authRouter = require("./controllers/auth");
 const usersRouter = require("./controllers/users");
+const classesRouter = require("./controllers/classes");
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -28,6 +29,7 @@ app.use(logger("dev"));
 
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
+app.use("/classes", classesRouter);
 
 /* --------- ROUTES --------- */
 

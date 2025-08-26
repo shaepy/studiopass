@@ -13,6 +13,7 @@ const sessionSchema = mongoose.Schema({
   instructorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   bookings: [
     {
@@ -23,6 +24,7 @@ const sessionSchema = mongoose.Schema({
   status: {
     type: String,
     enum: ["scheduled", "canceled", "inactive"],
+    required: true,
   },
 });
 
