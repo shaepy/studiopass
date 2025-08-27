@@ -33,6 +33,7 @@ const createSession = async (reqBody) => {
     // req.body.instructor will be a username
     const instructor = await User.findOne({ username: reqBody.instructor });
     console.log("instructor found by username:", instructor);
+
     if (!instructor) return null;
 
     const {
@@ -229,16 +230,18 @@ const createBooking = async (sessionId, userId) => {
     const user = await User.findById(userId);
     if (user.role !== "student") return null;
 
+    // check session capacity
     const session = await Session.findById(sessionId).populate("bookings");
-    console.log("session found:", session);
+    if (session.bookings.length >= session.capacity) {
+      return "maxCapacityReached"
+    }
 
-    // if this session's bookings userId matches this userId, return null
     const isDuplicate = session.bookings.some(
       (booking) => booking.userId.toString() === userId
     );
     if (isDuplicate) return null;
 
-    // else, create booking
+    // create booking
     const newBooking = await Booking.create({
       sessionId: sessionId,
       userId: user._id,
@@ -250,7 +253,6 @@ const createBooking = async (sessionId, userId) => {
     await user.save();
     session.bookings.push(newBooking);
     await session.save();
-
     return newBooking;
   } catch (err) {
     console.log(err);

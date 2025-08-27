@@ -4,6 +4,40 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
+// /sign-up?role=staff
+router.post("/sign-up", async (req, res) => {
+  try {
+    const { role } = req.query;
+    // role = 'admin', 'staff', 'client'
+    // equals to = 'owner', 'instructor', 'student'
+
+    const userInDatabase = await User.findOne({ username: req.body.username });
+    if (userInDatabase) {
+      return res.status(409).json({ err: "Username already taken." });
+    }
+
+    // create admin account
+    const user = await User.create({
+      username: req.body.username,
+      hashedPassword: bcrypt.hashSync(req.body.password, 12),
+      email: req.body.email,
+      role: "owner",
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+    });
+
+    const payload = {
+      username: user.username,
+      _id: user._id,
+      role: user.role,
+    };
+    const token = jwt.sign({ payload }, process.env.JWT_SECRET);
+    res.status(201).json({ user, token });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
 router.post("/admin/sign-up", async (req, res) => {
   try {
     const userInDatabase = await User.findOne({ username: req.body.username });

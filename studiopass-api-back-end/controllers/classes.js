@@ -3,7 +3,7 @@ const router = express.Router();
 const verifyToken = require("../middleware/verify-token");
 const database = require("../queries/queries");
 
-// TODO-ST: View My Sessions by Instructor
+// STRETCH GOALS: filter query (by instructor, by date)
 
 // GET - ALL SESSIONS - /classes
 router.get("/", async (req, res) => {
@@ -46,7 +46,7 @@ router.get("/:sessionId/bookings", verifyToken, async (req, res) => {
   }
 });
 
-// POST - CREATE SESSION - /classes
+// POST - CREATE NEW SESSION - /classes
 router.post("/", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
@@ -128,7 +128,7 @@ router.delete("/:sessionId", verifyToken, async (req, res) => {
   }
 });
 
-// POST - NEW BOOKING - /classes/:sessionId/bookings
+// POST - CREATE NEW BOOKING - /classes/:sessionId/bookings
 router.post("/:sessionId/bookings", verifyToken, async (req, res) => {
   try {
     const newBooking = await database.createBooking(
@@ -137,8 +137,13 @@ router.post("/:sessionId/bookings", verifyToken, async (req, res) => {
     );
     console.log("newBooking completed:", newBooking);
     if (!newBooking) {
-      return res.status(403).json({
-        error: "Error with duplicate booking or not valid permissions",
+      return res
+        .status(403)
+        .json({ error: "Duplicate booking or not valid permissions" });
+    } else if (newBooking === "maxCapacityReached") {
+      return res.status(409).json({
+        error: "Session at max capacity",
+        details: "Cannot book reservation; the class is already full.",
       });
     }
     res.status(201).json(newBooking);
