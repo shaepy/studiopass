@@ -33,6 +33,7 @@ const createSession = async (reqBody) => {
     // req.body.instructor will be a username
     const instructor = await User.findOne({ username: reqBody.instructor });
     console.log("instructor found by username:", instructor);
+    if (!instructor) return null;
 
     const {
       startAtDate,
@@ -152,9 +153,6 @@ const cancelSession = async (sessionId, user) => {
     console.log("session.bookings details:", session.bookings);
     // Loop through each booking in the session
     for (const booking of session.bookings) {
-      console.log(
-        `Processing booking ${booking._id} for user ${booking.userId}`
-      );
       const user = await User.findById(booking.userId);
       if (user) {
         user.bookings.pull(booking._id);
@@ -166,15 +164,17 @@ const cancelSession = async (sessionId, user) => {
     }
 
     // Delete all bookings from the Booking model
-    const bookingIds = session.bookings.map((booking) => booking._id);
-    await Booking.deleteMany({ _id: { $in: bookingIds } });
-    console.log(`Deleted ${bookingIds.length} bookings from Booking model`);
+    const deletedBookings = await Booking.deleteMany({
+      sessionId: session._id,
+    });
+    console.log(
+      `Deleted ${deletedBookings.deletedCount} bookings from Booking model`
+    );
 
     // Update session status to canceled and clear bookings array
     session.status = "canceled";
     session.bookings = [];
     const canceledSession = await session.save();
-
     return canceledSession;
   } catch (err) {
     console.log(err);
@@ -182,9 +182,53 @@ const cancelSession = async (sessionId, user) => {
   }
 };
 
+const deleteSession = async (sessionId) => {
+  try {
+    const session = await Session.findById(sessionId);
+    const sessionBookings = await Booking.find({ sessionId: session._id });
+    console.log("sessionBookings list:", sessionBookings);
+
+    for (const booking of sessionBookings) {
+      const user = await User.findById(booking.userId);
+      if (user) {
+        user.bookings.pull(booking._id);
+        await user.save();
+        console.log(
+          `Removed booking ${booking._id} from user ${user.username}'s bookings`
+        );
+      }
+    }
+
+    // Delete all bookings from the Booking model
+    const deletedBookings = await Booking.deleteMany({
+      sessionId: session._id,
+    });
+    console.log(
+      `Deleted ${deletedBookings.deletedCount} bookings from Booking model`
+    );
+
+    // Remove session from instructor's sessions
+    const instructor = await User.findById(session.instructorId);
+    instructor.sessions.pull(session._id);
+    await instructor.save();
+    console.log(
+      `Removed session ${session._id} from ${instructor.username}'s sessions`
+    );
+
+    const deletedSession = await session.deleteOne();
+    console.log("Successfully deleted session:", deletedSession);
+    return deletedSession;
+  } catch (err) {
+    console.log(err);
+    throw new Error("Error something went wrong deleting the session");
+  }
+};
+
 const createBooking = async (sessionId, userId) => {
   try {
     const user = await User.findById(userId);
+    if (user.role !== "student") return null;
+
     const session = await Session.findById(sessionId).populate("bookings");
     console.log("session found:", session);
 
@@ -271,6 +315,7 @@ module.exports = {
   updateSessionData,
   updateSessionInstructor,
   cancelSession,
+  deleteSession,
   // Booking
   getBookingsByUserId,
   getBookingById,

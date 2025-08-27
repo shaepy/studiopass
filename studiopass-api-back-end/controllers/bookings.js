@@ -25,7 +25,9 @@ router.put("/:bookingId", verifyToken, async (req, res) => {
       req.params.bookingId
     );
     console.log("canceledBooking is:", canceledBooking);
-    res.status(200).json(canceledBooking);
+    res
+      .status(200)
+      .json(canceledBooking, { message: "Successfully canceled booking." });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }

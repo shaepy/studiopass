@@ -54,6 +54,9 @@ router.post("/", verifyToken, async (req, res) => {
     }
     // * only allow instructors to be selected on front-end from drop-down (username)
     const newSession = await database.createSession(req.body);
+    if (!newSession) {
+      return res.status(404).send("Not an existing instructor in database.");
+    }
     res.status(201).json(newSession);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -118,8 +121,8 @@ router.delete("/:sessionId", verifyToken, async (req, res) => {
     if (req.user.role !== "owner") {
       return res.status(403).send("You do not have permissions to do that.");
     }
-
-    // TODO-ST
+    await database.deleteSession(req.params.sessionId);
+    res.status(200).json({ message: "Session deleted successfully." });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
@@ -133,13 +136,11 @@ router.post("/:sessionId/bookings", verifyToken, async (req, res) => {
       req.user._id
     );
     console.log("newBooking completed:", newBooking);
-
     if (!newBooking) {
-      return res
-        .status(403)
-        .json({ error: "Error with duplicate booking for this userId" });
+      return res.status(403).json({
+        error: "Error with duplicate booking or not valid permissions",
+      });
     }
-
     res.status(201).json(newBooking);
   } catch (err) {
     res.status(500).json({ err: err.message });
