@@ -11,12 +11,11 @@ const userSchema = mongoose.Schema({
   bio: { type: String },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+
   // role: 'instructor' only
-  assignedSessions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Session" }],
-  pastSessions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Session" }],
-  // student tracking
-  currentBookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
-  pastBookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
+  sessions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Session" }],
+  // student attendance record
+  bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
 });
 
 userSchema.set("toJSON", {

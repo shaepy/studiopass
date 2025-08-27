@@ -1,16 +1,46 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/user");
-const Session = require("../models/session");
 const verifyToken = require("../middleware/verify-token");
 const database = require("../queries/queries");
 
+// TODO-ST: View My Sessions by Instructor
+
 // GET - ALL SESSIONS - /classes
-router.get("/", verifyToken, async (req, res) => {
+router.get("/", async (req, res) => {
+  // unauth route available so non-logged in users can view classes
   try {
     const schedule = await database.getSessions();
     console.log("schedule from database:", schedule);
-    res.status(201).json(schedule);
+    res.status(200).json(schedule);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// GET - VIEW SESSION - /classes/:sessionId - # session page
+router.get("/:sessionId", async (req, res) => {
+  // unauth route available so non-logged in users can view a class
+  // specific details visible or not, will be determined based on user role ?
+  try {
+    const session = await database.getSessionById(req.params.sessionId);
+    console.log("session found is:", session);
+    res.status(200).json(session);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// * might not be needed ?
+// GET - VIEW SESSION ROSTER - /classes/:sessionId/bookings - # instructor/owner sees roster
+router.get("/:sessionId/bookings", verifyToken, async (req, res) => {
+  try {
+    // access only for role: 'instructor' or 'owner'
+    if (req.user.role === "student") {
+      return res.status(403).send("You do not have permissions to do that.");
+    }
+    const session = await database.getSessionById(req.params.sessionId);
+    console.log("session found is:", session);
+    res.status(200).json(session);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
@@ -22,34 +52,98 @@ router.post("/", verifyToken, async (req, res) => {
     if (req.user.role !== "owner") {
       return res.status(403).send("You do not have permissions to do that.");
     }
+    // * only allow instructors to be selected on front-end from drop-down (username)
     const newSession = await database.createSession(req.body);
-    console.log("newSession is:", newSession);
     res.status(201).json(newSession);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
 });
 
-// PUT - EDIT SESSION - /classes/:classId
-router.put("/:classId", verifyToken, async (req, res) => {
-  //
+// PUT - EDIT SESSION DATA - /classes/:sessionId
+router.put("/:sessionId", verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== "owner") {
+      return res.status(403).send("You do not have permissions to do that.");
+    }
+    const updatedSession = await database.updateSessionData(
+      req.params.sessionId,
+      req.body
+    );
+    res.status(200).json(updatedSession);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
 });
 
-// DELETE - DELETE SESSION - /classes/:classId
-router.delete("/:classId", verifyToken, async (req, res) => {
-  //
+// PUT - REASSIGN SESSION INSTRUCTOR - /classes/:sessionId/instructor
+router.put("/:sessionId/instructor", verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== "owner") {
+      return res.status(403).send("You do not have permissions to do that.");
+    }
+    const updatedSession = await database.updateSessionInstructor(
+      req.params.sessionId,
+      req.body.instructor
+    );
+    res.status(200).json(updatedSession);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
 });
 
-// POST - NEW BOOKING - /classes/:classId/bookings
-router.post("/:classId/bookings", verifyToken, async (req, res) => {
-  // * new booking
-  // edit session to add new booking reference
+// PUT - CANCEL SESSION - /classes/:sessionId/cancel
+// updates the session status to 'canceled'
+router.put("/:sessionId/cancel", verifyToken, async (req, res) => {
+  try {
+    if (req.user.role === "student") {
+      return res.status(403).send("You do not have permissions to do that.");
+    }
+    const canceledSession = await database.cancelSession(
+      req.params.sessionId,
+      req.user
+    );
+    if (!canceledSession) {
+      return res.status(403).send("Invalid permissions.");
+    }
+    res.status(200).json(canceledSession);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
 });
 
-/*
-POST   /classes/:classId/bookings     # student books a class
-GET    /classes/:classId/bookings     # instructor/owner sees roster
-DELETE /classes/:classId/bookings/:bookingId   # cancel booking
-*/
+// DELETE - DELETE SESSION - /classes/:sessionId (owner access only)
+router.delete("/:sessionId", verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== "owner") {
+      return res.status(403).send("You do not have permissions to do that.");
+    }
+
+    // TODO-ST
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+// POST - NEW BOOKING - /classes/:sessionId/bookings
+router.post("/:sessionId/bookings", verifyToken, async (req, res) => {
+  try {
+    const newBooking = await database.createBooking(
+      req.params.sessionId,
+      req.user._id
+    );
+    console.log("newBooking completed:", newBooking);
+
+    if (!newBooking) {
+      return res
+        .status(403)
+        .json({ error: "Error with duplicate booking for this userId" });
+    }
+
+    res.status(201).json(newBooking);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
 
 module.exports = router;

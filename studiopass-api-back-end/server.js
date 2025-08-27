@@ -8,6 +8,7 @@ const logger = require("morgan");
 const authRouter = require("./controllers/auth");
 const usersRouter = require("./controllers/users");
 const classesRouter = require("./controllers/classes");
+const bookingsRouter = require("./controllers/bookings");
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -30,6 +31,7 @@ app.use(logger("dev"));
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/classes", classesRouter);
+app.use("/account/bookings", bookingsRouter);
 
 /* --------- ROUTES --------- */
 

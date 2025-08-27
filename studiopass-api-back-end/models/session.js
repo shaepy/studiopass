@@ -8,7 +8,7 @@ const sessionSchema = mongoose.Schema({
   capacity: {
     type: Number,
     required: true,
-    default: 10,
+    default: 3,
   },
   instructorId: {
     type: mongoose.Schema.Types.ObjectId,
