@@ -28,6 +28,22 @@ const getSessionById = async (sessionId) => {
   }
 };
 
+const getSessionsByInstructor = async (instructorId) => {
+  try {
+    return await Session.find({
+      instructorId: instructorId,
+    }).populate({
+      path: "bookings",
+      populate: { path: "userId" },
+    });
+  } catch (err) {
+    console.log(err);
+    throw new Error(
+      "Error something went wrong with fetching sessions by instructor"
+    );
+  }
+};
+
 const createSession = async (reqBody) => {
   try {
     // req.body.instructor will be a username
@@ -41,7 +57,7 @@ const createSession = async (reqBody) => {
       startAtTime,
       endAtDate,
       endAtTime,
-      timezone = "-07:00", // if no timezone is passed, default
+      timezone = "-07:00", // if no timezone is passed, use default
     } = reqBody;
 
     const startAt = new Date(`${startAtDate}T${startAtTime}:00${timezone}`);
@@ -76,7 +92,7 @@ const updateSessionData = async (sessionId, reqBody) => {
       startAtTime,
       endAtDate,
       endAtTime,
-      timezone = "-07:00", // if no timezone is passed, default
+      timezone = "-07:00", // if no timezone is passed, use default
     } = reqBody;
 
     console.log(
@@ -233,7 +249,7 @@ const createBooking = async (sessionId, userId) => {
     // check session capacity
     const session = await Session.findById(sessionId).populate("bookings");
     if (session.bookings.length >= session.capacity) {
-      return "maxCapacityReached"
+      return "maxCapacityReached";
     }
 
     const isDuplicate = session.bookings.some(
@@ -280,19 +296,50 @@ const getBookingsByUserId = async (userId) => {
     return bookings;
   } catch (err) {
     console.log(err);
-    throw new Error("Error something went wrong with cancelling a booking");
+    throw new Error(
+      "Error something went wrong with getting bookings by userId"
+    );
   }
 };
 
-const updateBookingStatus = async (bookingId) => {
+// const getBookingsByInstructor = async (instructorId) => {
+//   try {
+//     const instructor = await User.findById(instructorId).populate({
+//       path: "sessions",
+//       populate: {
+//         path: "bookings",
+//         populate: [{ path: "userId" }, { path: "sessionId" }],
+//       },
+//     });
+//     const allBookings = [];
+//     for (const session of instructor.sessions) {
+//       if (session.bookings && session.bookings.length > 0) {
+//         allBookings.push(...session.bookings);
+//       }
+//     }
+//     return allBookings;
+//   } catch (err) {
+//     console.log(err);
+//     throw new Error(
+//       "Error something went wrong with getting bookings by instructor"
+//     );
+//   }
+// };
+
+const updateBookingStatus = async (bookingId, user) => {
   try {
-    const canceledBooking = await Booking.findByIdAndUpdate(
-      bookingId,
-      { status: "canceled" },
-      { new: true }
-    );
-    console.log("canceledBooking is complete:", canceledBooking);
-    const session = await Session.findById(canceledBooking.sessionId).populate(
+    const booking = await Booking.findById(bookingId);
+    console.log("booking found:", booking);
+
+    if (user.role === "student" && user._id !== booking.userId.toString()) {
+      console.log("Unauthorized access. Not your booking");
+      return null;
+    }
+
+    booking.status = "canceled";
+    await booking.save();
+
+    const session = await Session.findById(booking.sessionId).populate(
       "bookings"
     );
     console.log("session found:", session);
@@ -312,6 +359,7 @@ module.exports = {
   // Session
   createSession,
   getSessions,
+  getSessionsByInstructor,
   createBooking,
   getSessionById,
   updateSessionData,
@@ -320,6 +368,7 @@ module.exports = {
   deleteSession,
   // Booking
   getBookingsByUserId,
+  // getBookingsByInstructor,
   getBookingById,
   updateBookingStatus,
 };

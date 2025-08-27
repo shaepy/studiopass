@@ -3,10 +3,12 @@ const router = express.Router();
 const User = require("../models/user");
 const verifyToken = require("../middleware/verify-token");
 
+// TODO-ST WIP
+
 router.get("/", verifyToken, async (req, res) => {
   try {
     // get a list of all users but only return their username and _id
-    const users = await User.find({}, "username");
+    const users = await User.find({});
     console.log("all users:", users);
 
     res.json(users);

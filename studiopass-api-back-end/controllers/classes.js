@@ -50,12 +50,15 @@ router.get("/:sessionId/bookings", verifyToken, async (req, res) => {
 router.post("/", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).send("You do not have permissions to do that.");
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
     }
     // * only allow instructors to be selected on front-end from drop-down (username)
     const newSession = await database.createSession(req.body);
     if (!newSession) {
-      return res.status(404).send("Not an existing instructor in database.");
+      return res.status(404).json({ error: "Instructor not found" });
     }
     res.status(201).json(newSession);
   } catch (err) {
@@ -67,7 +70,10 @@ router.post("/", verifyToken, async (req, res) => {
 router.put("/:sessionId", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).send("You do not have permissions to do that.");
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
     }
     const updatedSession = await database.updateSessionData(
       req.params.sessionId,
@@ -83,7 +89,10 @@ router.put("/:sessionId", verifyToken, async (req, res) => {
 router.put("/:sessionId/instructor", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).send("You do not have permissions to do that.");
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
     }
     const updatedSession = await database.updateSessionInstructor(
       req.params.sessionId,
@@ -100,14 +109,20 @@ router.put("/:sessionId/instructor", verifyToken, async (req, res) => {
 router.put("/:sessionId/cancel", verifyToken, async (req, res) => {
   try {
     if (req.user.role === "student") {
-      return res.status(403).send("You do not have permissions to do that.");
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
     }
     const canceledSession = await database.cancelSession(
       req.params.sessionId,
       req.user
     );
     if (!canceledSession) {
-      return res.status(403).send("Invalid permissions.");
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
     }
     res.status(200).json(canceledSession);
   } catch (err) {
@@ -119,7 +134,10 @@ router.put("/:sessionId/cancel", verifyToken, async (req, res) => {
 router.delete("/:sessionId", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).send("You do not have permissions to do that.");
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
     }
     await database.deleteSession(req.params.sessionId);
     res.status(200).json({ message: "Session deleted successfully." });
