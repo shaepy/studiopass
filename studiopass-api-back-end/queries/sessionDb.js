@@ -1,14 +1,17 @@
 const Session = require("../models/session");
 const Booking = require("../models/booking");
 const User = require("../models/user");
+const utils = require("../utils/serverUtils");
 
 // TODO-ST: prevention for not being able to create something new, scheduled in the past
 
 const getSessions = async () => {
   try {
-    return await Session.find({})
+    const sessions = await Session.find({})
       .populate(["instructorId", "bookings"])
       .sort({ startAt: "asc" });
+    const formattedSessions = await utils.formatSessions(sessions);
+    return formattedSessions;
   } catch (err) {
     console.log(err);
     throw new Error("Error something went wrong with fetching sessions");
@@ -17,11 +20,15 @@ const getSessions = async () => {
 
 const getSessionById = async (sessionId) => {
   try {
-    const session = await Session.findById(sessionId).populate({
-      path: "bookings",
-      populate: { path: "userId" },
-    });
-    return session;
+    const session = await Session.findById(sessionId).populate([
+      "instructorId",
+      {
+        path: "bookings",
+        populate: { path: "userId" },
+      },
+    ]);
+    const formatted = await utils.formatSession(session);
+    return formatted;
   } catch (err) {
     console.log(err);
     throw new Error("Error something went wrong with fetching session by ID");
@@ -241,134 +248,13 @@ const deleteSession = async (sessionId) => {
   }
 };
 
-const createBooking = async (sessionId, userId) => {
-  try {
-    const user = await User.findById(userId);
-    if (user.role !== "student") return null;
-
-    // check session capacity
-    const session = await Session.findById(sessionId).populate("bookings");
-    if (session.bookings.length >= session.capacity) {
-      return "maxCapacityReached";
-    }
-
-    const isDuplicate = session.bookings.some(
-      (booking) => booking.userId.toString() === userId
-    );
-    if (isDuplicate) return null;
-
-    // create booking
-    const newBooking = await Booking.create({
-      sessionId: sessionId,
-      userId: user._id,
-      status: "active",
-    });
-
-    // add booking to user's bookings and session's bookings
-    user.bookings.push(newBooking);
-    await user.save();
-    session.bookings.push(newBooking);
-    await session.save();
-    return newBooking;
-  } catch (err) {
-    console.log(err);
-    throw new Error("Error something went wrong with creating a booking");
-  }
-};
-
-const getBookingById = async (bookingId) => {
-  try {
-    const booking = await Booking.findById(bookingId).populate("sessionId");
-    console.log("booking found by ID:", booking);
-    return booking;
-  } catch (err) {
-    console.log(err);
-    throw new Error("Error something went wrong with cancelling a booking");
-  }
-};
-
-const getBookingsByUserId = async (userId) => {
-  try {
-    const bookings = await Booking.find({ userId: userId })
-      .populate("sessionId")
-      .sort({ status: "asc" });
-    console.log("user found for bookings:", bookings);
-    return bookings;
-  } catch (err) {
-    console.log(err);
-    throw new Error(
-      "Error something went wrong with getting bookings by userId"
-    );
-  }
-};
-
-// const getBookingsByInstructor = async (instructorId) => {
-//   try {
-//     const instructor = await User.findById(instructorId).populate({
-//       path: "sessions",
-//       populate: {
-//         path: "bookings",
-//         populate: [{ path: "userId" }, { path: "sessionId" }],
-//       },
-//     });
-//     const allBookings = [];
-//     for (const session of instructor.sessions) {
-//       if (session.bookings && session.bookings.length > 0) {
-//         allBookings.push(...session.bookings);
-//       }
-//     }
-//     return allBookings;
-//   } catch (err) {
-//     console.log(err);
-//     throw new Error(
-//       "Error something went wrong with getting bookings by instructor"
-//     );
-//   }
-// };
-
-const updateBookingStatus = async (bookingId, user) => {
-  try {
-    const booking = await Booking.findById(bookingId);
-    console.log("booking found:", booking);
-
-    if (user.role === "student" && user._id !== booking.userId.toString()) {
-      console.log("Unauthorized access. Not your booking");
-      return null;
-    }
-
-    booking.status = "canceled";
-    await booking.save();
-
-    const session = await Session.findById(booking.sessionId).populate(
-      "bookings"
-    );
-    console.log("session found:", session);
-
-    // remove booking from session
-    session.bookings.pull(bookingId);
-    const updatedSession = await session.save();
-
-    return updatedSession;
-  } catch (err) {
-    console.log(err);
-    throw new Error("Error something went wrong with cancelling a booking");
-  }
-};
-
 module.exports = {
-  // Session
   createSession,
   getSessions,
   getSessionsByInstructor,
-  createBooking,
   getSessionById,
   updateSessionData,
   updateSessionInstructor,
   cancelSession,
   deleteSession,
-  // Booking
-  getBookingsByUserId,
-  // getBookingsByInstructor,
-  getBookingById,
-  updateBookingStatus,
 };

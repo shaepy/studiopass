@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/verify-token");
-const database = require("../queries/queries");
+const sessionDb = require("../queries/sessionDb");
+const bookingDb = require("../queries/bookingDb");
 
 // STRETCH GOALS: filter query (by instructor, by date)
 
@@ -9,8 +10,8 @@ const database = require("../queries/queries");
 router.get("/", async (req, res) => {
   // unauth route available so non-logged in users can view classes
   try {
-    const schedule = await database.getSessions();
-    console.log("schedule from database:", schedule);
+    const schedule = await sessionDb.getSessions();
+    console.log("schedule from sessionDb:", schedule);
     res.status(200).json(schedule);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -19,10 +20,8 @@ router.get("/", async (req, res) => {
 
 // GET - VIEW SESSION - /classes/:sessionId - # session page
 router.get("/:sessionId", async (req, res) => {
-  // unauth route available so non-logged in users can view a class
-  // specific details visible or not, will be determined based on user role ?
   try {
-    const session = await database.getSessionById(req.params.sessionId);
+    const session = await sessionDb.getSessionById(req.params.sessionId);
     console.log("session found is:", session);
     res.status(200).json(session);
   } catch (err) {
@@ -38,7 +37,7 @@ router.get("/:sessionId/bookings", verifyToken, async (req, res) => {
     if (req.user.role === "student") {
       return res.status(403).send("You do not have permissions to do that.");
     }
-    const session = await database.getSessionById(req.params.sessionId);
+    const session = await sessionDb.getSessionById(req.params.sessionId);
     console.log("session found is:", session);
     res.status(200).json(session);
   } catch (err) {
@@ -56,7 +55,7 @@ router.post("/", verifyToken, async (req, res) => {
       });
     }
     // * only allow instructors to be selected on front-end from drop-down (username)
-    const newSession = await database.createSession(req.body);
+    const newSession = await sessionDb.createSession(req.body);
     if (!newSession) {
       return res.status(404).json({ error: "Instructor not found" });
     }
@@ -75,7 +74,7 @@ router.put("/:sessionId", verifyToken, async (req, res) => {
         details: "You do not have permissions to do that.",
       });
     }
-    const updatedSession = await database.updateSessionData(
+    const updatedSession = await sessionDb.updateSessionData(
       req.params.sessionId,
       req.body
     );
@@ -94,7 +93,7 @@ router.put("/:sessionId/instructor", verifyToken, async (req, res) => {
         details: "You do not have permissions to do that.",
       });
     }
-    const updatedSession = await database.updateSessionInstructor(
+    const updatedSession = await sessionDb.updateSessionInstructor(
       req.params.sessionId,
       req.body.instructor
     );
@@ -114,7 +113,7 @@ router.put("/:sessionId/cancel", verifyToken, async (req, res) => {
         details: "You do not have permissions to do that.",
       });
     }
-    const canceledSession = await database.cancelSession(
+    const canceledSession = await sessionDb.cancelSession(
       req.params.sessionId,
       req.user
     );
@@ -139,7 +138,7 @@ router.delete("/:sessionId", verifyToken, async (req, res) => {
         details: "You do not have permissions to do that.",
       });
     }
-    await database.deleteSession(req.params.sessionId);
+    await sessionDb.deleteSession(req.params.sessionId);
     res.status(200).json({ message: "Session deleted successfully." });
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -149,7 +148,7 @@ router.delete("/:sessionId", verifyToken, async (req, res) => {
 // POST - CREATE NEW BOOKING - /classes/:sessionId/bookings
 router.post("/:sessionId/bookings", verifyToken, async (req, res) => {
   try {
-    const newBooking = await database.createBooking(
+    const newBooking = await bookingDb.createBooking(
       req.params.sessionId,
       req.user._id
     );

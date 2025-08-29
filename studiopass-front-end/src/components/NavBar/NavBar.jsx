@@ -23,6 +23,11 @@ const NavBar = () => {
           <li>
             <Link to="/schedule">Class Schedule</Link>
           </li>
+          {user.role === "owner" && (
+            <li>
+              <Link to="/admin/new-session">New Session</Link>
+            </li>
+          )}
           <li>
             <Link to="/" onClick={handleSignOut}>
               Sign Out

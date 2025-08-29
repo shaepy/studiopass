@@ -3,15 +3,46 @@ const router = express.Router();
 const User = require("../models/user");
 const verifyToken = require("../middleware/verify-token");
 
-// TODO-ST WIP
-
 router.get("/", verifyToken, async (req, res) => {
   try {
-    // get a list of all users but only return their username and _id
+    if (req.user.role !== "owner") {
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
+    }
     const users = await User.find({});
-    console.log("all users:", users);
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
 
-    res.json(users);
+router.get("/staff", verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== "owner") {
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
+    }
+    const users = await User.find({ role: { $in: ["instructor", "owner"] } });
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+});
+
+router.get("/students", verifyToken, async (req, res) => {
+  try {
+    if (req.user.role !== "owner") {
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
+    }
+    const students = await User.find({ role: "student" });
+    res.status(200).json(students);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
@@ -19,17 +50,18 @@ router.get("/", verifyToken, async (req, res) => {
 
 router.get("/:userId", verifyToken, async (req, res) => {
   try {
-    // If the user is looking for the details of another user, block the request
-    // Send a 403 status code to indicate that the user is unauthorized
-    if (req.user._id !== req.params.userId) {
-      return res.status(403).json({ err: "Unauthorized" });
+    if (req.user.role !== "owner") {
+      return res.status(403).json({
+        error: "Forbidden",
+        details: "You do not have permissions to do that.",
+      });
     }
 
     const user = await User.findById(req.params.userId);
     console.log("User found is:", user);
 
     if (!user) return res.status(404).json({ err: "User not found." });
-    res.json({ user });
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
