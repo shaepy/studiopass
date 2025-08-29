@@ -15,6 +15,8 @@ const Schedule = () => {
     fetchAllSessions();
   }, [sessions, user]);
 
+  if (!sessions) return <p>Loading...</p>;
+
   return (
     <>
       <main>
@@ -24,17 +26,18 @@ const Schedule = () => {
             <header>
               <div>
                 <h2>{session.title}</h2>
-                <Link to={`/schedule/${session._id}`}>More Info</Link>
-                <button>Book</button>
                 <h3>
                   {session.weekday}, {session.month} {session.day} •{" "}
                   {session.startTime} - {session.endTime}
                 </h3>
               </div>
+              <div>
+                <Link to={`/schedule/${session._id}`}>More Info</Link>
+                <button>Book</button>
+              </div>
             </header>
             <div>
               <p>Instructor: {session.instructorName}</p>
-              <p>Class Description: {session.description}</p>
             </div>
           </article>
         ))}

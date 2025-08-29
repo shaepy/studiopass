@@ -1,9 +1,12 @@
 import { useState, useEffect, useContext } from "react";
+import { useNavigate, useParams } from "react-router";
 import * as userApi from "../../services/userService";
 import * as sessionApi from "../../services/sessionService";
 import { UserContext } from "../../contexts/UserContext";
 
-const NewSessionForm = () => {
+const SessionForm = () => {
+  const navigate = useNavigate();
+  const { sessionId } = useParams(); // if sessionId is undefined, not an edit route.
   const { user } = useContext(UserContext);
   const [formData, setFormData] = useState({
     title: "",
@@ -16,6 +19,16 @@ const NewSessionForm = () => {
     instructor: "shae",
   });
   const [instructors, setInstructors] = useState([]);
+
+  //fetch session
+  useEffect(() => {
+    const fetchSession = async () => {
+      const sessionData = await sessionApi.show(sessionId);
+      console.log("sessionData returned from api:", sessionData);
+      setFormData(sessionData);
+    };
+    if (sessionId) fetchSession();
+  }, [sessionId]);
 
   useEffect(() => {
     const fetchStaff = async () => {
@@ -32,14 +45,21 @@ const NewSessionForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-    const newSession = await sessionApi.create();
-    console.log("newSession created:", newSession);
+    if (sessionId) {
+      const updatedSession = await sessionApi.update(sessionId, formData);
+      console.log("updatedSession is:", updatedSession);
+      navigate(`/schedule/${sessionId}`);
+    } else {
+      const newSession = await sessionApi.create(formData);
+      console.log("newSession created:", newSession);
+      navigate("/schedule");
+    }
   };
 
   return (
     <>
       <main>
-        <h1>Create a New Session</h1>
+        <h1>{sessionId ? "Edit Session" : "Create New Session"}</h1>
         <form onSubmit={handleSubmit}>
           <div>
             <label>Title</label>
@@ -140,4 +160,4 @@ const NewSessionForm = () => {
   );
 };
 
-export default NewSessionForm;
+export default SessionForm;

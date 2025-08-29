@@ -22,9 +22,18 @@ const ClassPage = () => {
     <>
       <main>
         <h1>{session.title}</h1>
+        <h2>
+          {session.month} {session.day}, {session.year} • {session.startTime} -{" "}
+          {session.endTime}
+        </h2>
         <h2>with {session.instructorName}</h2>
         <p>{session.description}</p>
         <button>Book</button>
+        {user.role === "owner" && (
+          <>
+            <Link to={`/schedule/${session._id}/edit`}>Edit</Link>
+          </>
+        )}
       </main>
     </>
   );

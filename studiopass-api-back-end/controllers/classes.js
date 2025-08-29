@@ -23,6 +23,9 @@ router.get("/:sessionId", async (req, res) => {
   try {
     const session = await sessionDb.getSessionById(req.params.sessionId);
     console.log("session found is:", session);
+
+    // * need to pass more details for FORMDATA
+    
     res.status(200).json(session);
   } catch (err) {
     res.status(500).json({ err: err.message });

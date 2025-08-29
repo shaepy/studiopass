@@ -28,13 +28,28 @@ export const show = async (sessionId) => {
 };
 
 // CREATE A SESSION
-export const create = async () => {
+export const create = async (sessionFormData) => {
   try {
-    const res = await axios.post(BASE_URL, {
+    const res = await axios.post(BASE_URL, sessionFormData, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     if (!res.data) {
       throw new Error("Error something went wrong creating the session");
+    }
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+// UPDATE A SESSION
+export const update = async (sessionId, sessionFormData) => {
+  try {
+    const res = await axios.put(`${BASE_URL}/${sessionId}`, sessionFormData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    if (!res.data) {
+      throw new Error("Error something went wrong updating the session");
     }
     return res.data;
   } catch (err) {

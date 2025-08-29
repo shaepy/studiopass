@@ -1,3 +1,5 @@
+const dayjs = require("dayjs");
+
 const formatSessions = (sessions) => {
   const transformedSessions = sessions.map((session) => {
     const start = new Date(session.startAt);
@@ -57,6 +59,14 @@ const formatSession = (session) => {
 
   const instructorName = `${session.instructorId.firstName} ${session.instructorId.lastName}`;
 
+  const startDate = dayjs(start);
+  const startAtDate = startDate.format("YYYY-MM-DD");
+  const startAtTime = startDate.format("HH:mm");
+
+  const endDate = dayjs(end);
+  const endAtDate = endDate.format("YYYY-MM-DD");
+  const endAtTime = endDate.format("HH:mm");
+
   return {
     ...session.toObject(),
     month: month,
@@ -66,6 +76,12 @@ const formatSession = (session) => {
     startTime: startTime,
     endTime: endTime,
     instructorName: instructorName,
+    // ALSO INCLUDE INFO FOR FORM DATA (EDIT SESSION)
+    instructor: session.instructorId.username,
+    startAtDate: startAtDate,
+    startAtTime: startAtTime,
+    endAtDate: endAtDate,
+    endAtTime: endAtTime,
   };
 };
 

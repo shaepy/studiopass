@@ -10,7 +10,7 @@ import Agenda from "./components/Agenda/Agenda";
 import Landing from "./components/Landing/Landing";
 import Loading from "./components/Loading/Loading";
 import ClassPage from "./components/ClassPage/ClassPage";
-import NewSessionForm from "./components/NewSessionForm/NewSessionForm";
+import SessionForm from "./components/SessionForm/SessionForm";
 
 function App() {
   const { user } = useContext(UserContext);
@@ -28,7 +28,10 @@ function App() {
 
         {/* Owner-only routes */}
         {user && user.role === "owner" && (
-          <Route path="/admin/new-session" element={<NewSessionForm />} />
+          <>
+            <Route path="/admin/new-session" element={<SessionForm />} />
+            <Route path="/schedule/:sessionId/edit" element={<SessionForm />} />
+          </>
         )}
 
         {!user && (
