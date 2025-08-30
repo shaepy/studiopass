@@ -1,17 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/verify-token");
+const optionalVerifyToken = require("../middleware/optional-verify-token");
 const sessionDb = require("../queries/sessionDb");
+const userDb = require("../queries/userDb");
 const bookingDb = require("../queries/bookingDb");
 
 // STRETCH GOALS: filter query (by instructor, by date)
 
 // GET - ALL SESSIONS - /classes
 router.get("/", async (req, res) => {
-  // unauth route available so non-logged in users can view classes
   try {
     const schedule = await sessionDb.getSessions();
-    console.log("schedule from sessionDb:", schedule);
     res.status(200).json(schedule);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -19,13 +19,16 @@ router.get("/", async (req, res) => {
 });
 
 // GET - VIEW SESSION - /classes/:sessionId - # session page
-router.get("/:sessionId", async (req, res) => {
+router.get("/:sessionId", optionalVerifyToken, async (req, res) => {
   try {
     const session = await sessionDb.getSessionById(req.params.sessionId);
-    console.log("session found is:", session);
-
-    // * need to pass more details for FORMDATA
-    
+    if (req.user && req.user.role === "student") {
+      const modifiedSession = await userDb.addUserReservedStatus(
+        session,
+        req.user._id
+      );
+      return res.status(200).json(modifiedSession);
+    }
     res.status(200).json(session);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -36,12 +39,10 @@ router.get("/:sessionId", async (req, res) => {
 // GET - VIEW SESSION ROSTER - /classes/:sessionId/bookings - # instructor/owner sees roster
 router.get("/:sessionId/bookings", verifyToken, async (req, res) => {
   try {
-    // access only for role: 'instructor' or 'owner'
     if (req.user.role === "student") {
       return res.status(403).send("You do not have permissions to do that.");
     }
     const session = await sessionDb.getSessionById(req.params.sessionId);
-    console.log("session found is:", session);
     res.status(200).json(session);
   } catch (err) {
     res.status(500).json({ err: err.message });
@@ -155,15 +156,20 @@ router.post("/:sessionId/bookings", verifyToken, async (req, res) => {
       req.params.sessionId,
       req.user._id
     );
-    console.log("newBooking completed:", newBooking);
     if (!newBooking) {
-      return res
-        .status(403)
-        .json({ error: "Duplicate booking or not valid permissions" });
+      return res.status(403).json({
+        error: "You are already booked for this class.",
+        details:
+          "Canceled operation as this will result in a duplicate booking.",
+      });
     } else if (newBooking === "maxCapacityReached") {
       return res.status(409).json({
-        error: "Session at max capacity",
-        details: "Cannot book reservation; the class is already full.",
+        error: "Cannot book reservation; the class is already full.",
+        details: "Session at max capacity",
+      });
+    } else if (newBooking === "Unauthorized") {
+      return res.status(403).json({
+        error: "You do not have permissions to do that.",
       });
     }
     res.status(201).json(newBooking);

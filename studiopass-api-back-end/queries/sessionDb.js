@@ -37,12 +37,16 @@ const getSessionById = async (sessionId) => {
 
 const getSessionsByInstructor = async (instructorId) => {
   try {
-    return await Session.find({
+    const sessions = await Session.find({
       instructorId: instructorId,
-    }).populate({
-      path: "bookings",
-      populate: { path: "userId" },
-    });
+    })
+      .populate({
+        path: "bookings",
+        populate: { path: "userId" },
+      })
+      .sort({ startAt: "asc" });
+    const formatted = await utils.formatSessions(sessions);
+    return formatted;
   } catch (err) {
     console.log(err);
     throw new Error(
@@ -76,7 +80,6 @@ const createSession = async (reqBody) => {
       startAt: startAt,
       endAt: endAt,
       capacity: reqBody.capacity || 3,
-      status: "scheduled",
       instructorId: instructor._id,
     });
     console.log("newSession created:", newSession);

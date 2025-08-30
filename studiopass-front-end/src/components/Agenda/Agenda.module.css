@@ -1,0 +1,15 @@
+.container article {
+  border: 1px solid black;
+  padding: 10px 20px;
+}
+
+.container section {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.container article div {
+  margin-bottom: 15px;
+}
+

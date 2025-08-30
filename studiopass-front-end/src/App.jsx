@@ -11,20 +11,55 @@ import Landing from "./components/Landing/Landing";
 import Loading from "./components/Loading/Loading";
 import ClassPage from "./components/ClassPage/ClassPage";
 import SessionForm from "./components/SessionForm/SessionForm";
+import * as sessionApi from "./services/sessionService";
 
 function App() {
+  const navigate = useNavigate();
   const { user } = useContext(UserContext);
   console.log("User signed in", user);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleAddBooking = async (sessionId, userId) => {
+    console.log("Book was clicked. Let's create a booking.");
+    const res = await sessionApi.createBooking(sessionId, userId);
+    console.log("api response returned", res);
+    if (res.status === 403) {
+      return setErrorMsg(res.data.error);
+    }
+    navigate("/agenda");
+  };
 
   return (
     <>
       <NavBar />
       <Routes>
-        {/* Open routes */}
+        {/* All-roles routes */}
         <Route path="/" element={<Landing />} />
-        <Route path="/schedule" element={<Schedule />} />
-        <Route path="/schedule/:sessionId" element={<ClassPage />} />
+        <Route
+          path="/schedule"
+          element={
+            <Schedule
+              handleAddBooking={handleAddBooking}
+              errorMsg={errorMsg}
+              setErrorMsg={setErrorMsg}
+            />
+          }
+        />
+        <Route
+          path="/schedule/:sessionId"
+          element={<ClassPage handleAddBooking={handleAddBooking} />}
+        />
         <Route path="/agenda" element={<Agenda />} />
+
+        {/* Admin-only routes (Instructor & Owner) */}
+        {user && (user.role === "owner" || user.role === "instructor") && (
+          <>
+            <Route
+              path="/users/:userId"
+              element={<p>User page under construction</p>}
+            />
+          </>
+        )}
 
         {/* Owner-only routes */}
         {user && user.role === "owner" && (

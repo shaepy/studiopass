@@ -24,8 +24,19 @@ const sessionSchema = mongoose.Schema({
   status: {
     type: String,
     enum: ["scheduled", "canceled", "inactive"],
+    default: "scheduled",
     required: true,
   },
 });
+
+sessionSchema.virtual("computedStatus").get(function () {
+  const now = new Date();
+  if (this.status === "canceled") return "canceled";
+  if (now < this.startAt) return "scheduled";
+  return "inactive";
+});
+
+sessionSchema.set("toJSON", { virtuals: true });
+sessionSchema.set("toObject", { virtuals: true });
 
 module.exports = mongoose.model("Session", sessionSchema);

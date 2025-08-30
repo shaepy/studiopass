@@ -1,11 +1,12 @@
 const Session = require("../models/session");
 const Booking = require("../models/booking");
 const User = require("../models/user");
+const utils = require("../utils/serverUtils");
 
 const createBooking = async (sessionId, userId) => {
   try {
     const user = await User.findById(userId);
-    if (user.role !== "student") return null;
+    if (user.role !== "student") return "Unauthorized";
 
     // check session capacity
     const session = await Session.findById(sessionId).populate("bookings");
@@ -22,7 +23,6 @@ const createBooking = async (sessionId, userId) => {
     const newBooking = await Booking.create({
       sessionId: sessionId,
       userId: user._id,
-      status: "active",
     });
 
     // add booking to user's bookings and session's bookings
@@ -50,11 +50,16 @@ const getBookingById = async (bookingId) => {
 
 const getBookingsByUserId = async (userId) => {
   try {
-    const bookings = await Booking.find({ userId: userId })
-      .populate("sessionId")
-      .sort({ status: "asc" });
+    const bookings = await Booking.find({ userId: userId }).populate({
+      path: "sessionId",
+      options: { sort: { startAt: -1 } }, // not returning the sort?
+    });
+
     console.log("user found for bookings:", bookings);
-    return bookings;
+    const modifiedBookings = await utils.formatAgendaBookings(bookings);
+    console.log("modifiedBookings:", modifiedBookings);
+
+    return modifiedBookings;
   } catch (err) {
     console.log(err);
     throw new Error(

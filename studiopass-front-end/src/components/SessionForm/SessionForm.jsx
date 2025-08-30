@@ -1,23 +1,23 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import * as userApi from "../../services/userService";
 import * as sessionApi from "../../services/sessionService";
-import { UserContext } from "../../contexts/UserContext";
+
+const initialState = {
+  title: "",
+  description: "",
+  startAtDate: "",
+  startAtTime: "",
+  endAtDate: "",
+  endAtTime: "",
+  capacity: 2,
+  instructor: "default",
+};
 
 const SessionForm = () => {
   const navigate = useNavigate();
   const { sessionId } = useParams(); // if sessionId is undefined, not an edit route.
-  const { user } = useContext(UserContext);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    startAtDate: "",
-    startAtTime: "",
-    endAtDate: "",
-    endAtTime: "",
-    capacity: 2,
-    instructor: "shae",
-  });
+  const [formData, setFormData] = useState(initialState);
   const [instructors, setInstructors] = useState([]);
 
   //fetch session
@@ -28,6 +28,7 @@ const SessionForm = () => {
       setFormData(sessionData);
     };
     if (sessionId) fetchSession();
+    return () => setFormData(initialState);
   }, [sessionId]);
 
   useEffect(() => {
@@ -37,6 +38,12 @@ const SessionForm = () => {
     };
     fetchStaff();
   }, []);
+
+  if (instructors) {
+    const list = instructors.map((i) => i.username);
+    if (list.length < 1) return;
+    initialState.instructor = list[0];
+  }
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -96,19 +103,23 @@ const SessionForm = () => {
               required
             />
           </div>
-          <div>
-            <label>Instructor</label>
-            <select
-              name="instructor"
-              id="instructor"
-              value={formData.instructor}
-              onChange={handleChange}
-              required>
-              {instructors.map((i) => (
-                <option key={i.username}>{i.username}</option>
-              ))}
-            </select>
-          </div>
+          {!sessionId && (
+            <>
+              <div>
+                <label>Instructor</label>
+                <select
+                  name="instructor"
+                  id="instructor"
+                  value={formData.instructor}
+                  onChange={handleChange}
+                  required>
+                  {instructors.map((i) => (
+                    <option key={i.username}>{i.username}</option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
           <div>
             <label>Start Date</label>
             <input

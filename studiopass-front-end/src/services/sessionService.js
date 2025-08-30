@@ -17,7 +17,10 @@ export const index = async () => {
 // VIEW A SESSION
 export const show = async (sessionId) => {
   try {
-    const res = await axios.get(`${BASE_URL}/${sessionId}`);
+    const headers = {};
+    const token = localStorage.getItem("token");
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const res = await axios.get(`${BASE_URL}/${sessionId}`, { headers });
     if (!res.data) {
       throw new Error("Error something went wrong fetching the session");
     }
@@ -54,5 +57,25 @@ export const update = async (sessionId, sessionFormData) => {
     return res.data;
   } catch (err) {
     console.log(err);
+  }
+};
+
+// CREATE A BOOKING
+export const createBooking = async (sessionId, userId) => {
+  try {
+    const res = await axios.post(
+      `${BASE_URL}/${sessionId}/bookings`,
+      { sessionId: sessionId, userId: userId },
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+    if (!res.data) {
+      throw new Error("Error something went wrong creating the session");
+    }
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response;
   }
 };
