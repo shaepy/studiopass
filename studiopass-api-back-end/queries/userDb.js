@@ -24,11 +24,14 @@ const getUserById = async (userId) => {
 
 const addUserReservedStatus = async (session, userId) => {
   try {
-    const user = await User.findById(userId).populate("bookings");
+    const user = await User.findById(userId);
     if (user.role === "student") {
-      const isBooked = user.bookings.some(
-        (booking) => booking.sessionId.toString() === session._id.toString()
-      );
+      const isBooked = session.bookings.some((booking) => {
+        return user.bookings.some(
+          (userBooking) => userBooking.toString() === booking._id.toString()
+        );
+      });
+      console.log("isBooked:", isBooked);
       session.reserved = isBooked ? true : false;
     }
     return session;

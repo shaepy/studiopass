@@ -8,14 +8,22 @@ const Agenda = () => {
   const { user } = useContext(UserContext);
   const [agenda, setAgenda] = useState([]);
 
+  const fetchAgendaIndex = async () => {
+    const agendaData = await agendaApi.index();
+    console.log("agendaData:", agendaData);
+    setAgenda(agendaData);
+  };
+
   useEffect(() => {
-    const fetchAgendaIndex = async () => {
-      const agendaData = await agendaApi.index();
-      console.log("agendaData:", agendaData);
-      setAgenda(agendaData);
-    };
     if (user) fetchAgendaIndex();
   }, [user]);
+
+  const handleCancelBooking = async (bookingId, user) => {
+    const canceled = await agendaApi.cancelBooking(bookingId, user);
+    console.log("handleCancelBooking API response:", canceled);
+    // refresh agenda
+    fetchAgendaIndex();
+  };
 
   if (!agenda) return <p>Loading...</p>;
 
@@ -23,19 +31,31 @@ const Agenda = () => {
     return (
       <main className={styles.container}>
         <h1>Upcoming</h1>
-        <p>Here are your current reservations.</p>
+        {agenda.length > 0 ? (
+          <p>Here are your current reservations.</p>
+        ) : (
+          <p>
+            Go to our <Link to="/schedule">class schedule</Link> and book a
+            class.
+          </p>
+        )}
         <section>
-          {agenda.map((item) => (
-            <article key={item._id}>
+          {agenda.map((booking) => (
+            <article key={booking._id}>
               <header>
-                <h2>{item.sessionId.title}</h2>
+                <h2>{booking.sessionId.title}</h2>
               </header>
               <div>
                 <p>
-                  {item.startDate} • {item.startTime} - {item.endTime}
+                  {booking.startDate} • {booking.startTime} - {booking.endTime}
                 </p>
-                <Link to={`/schedule/${item.sessionId._id}`}>View Class</Link>
+                <Link to={`/schedule/${booking.sessionId._id}`}>
+                  View Class
+                </Link>
               </div>
+              <button onClick={() => handleCancelBooking(booking._id, user)}>
+                Cancel
+              </button>
             </article>
           ))}
         </section>
@@ -46,17 +66,19 @@ const Agenda = () => {
       <main className={styles.container}>
         <h1>Upcoming</h1>
         <section>
-          {agenda.map((item) => (
-            <article key={item._id}>
+          {agenda.map((session) => (
+            <article key={session._id}>
               <header>
-                <h2>{item.title}</h2>
+                <h2>{session.title}</h2>
               </header>
               <div>
                 <p>
-                  {item.startDate}• {item.startTime} - {item.endTime}
+                  {session.startDate}• {session.startTime} - {session.endTime}
                 </p>
-                <p>{item.bookings.length}/{item.capacity} registered.</p>
-                <Link to={`/schedule/${item._id}`}>View Class</Link>
+                <p>
+                  {session.bookings.length}/{session.capacity} registered.
+                </p>
+                <Link to={`/schedule/${session._id}`}>Manage Class</Link>
               </div>
             </article>
           ))}

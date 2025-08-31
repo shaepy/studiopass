@@ -15,3 +15,22 @@ export const index = async () => {
     console.log(err);
   }
 };
+
+// UPDATE / CANCEL BOOKING STATUS
+export const cancelBooking = async (bookingId) => {
+  try {
+    const res = await axios.put(
+      `${BASE_URL}/${bookingId}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      }
+    );
+    if (!res.data) {
+      throw new Error("Error something went wrong fetching upcoming agenda");
+    }
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+};

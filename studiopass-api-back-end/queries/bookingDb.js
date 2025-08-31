@@ -50,10 +50,15 @@ const getBookingById = async (bookingId) => {
 
 const getBookingsByUserId = async (userId) => {
   try {
-    const bookings = await Booking.find({ userId: userId }).populate({
-      path: "sessionId",
-      options: { sort: { startAt: -1 } }, // not returning the sort?
-    });
+    const bookings = await Booking.find({
+      userId: userId,
+      status: "active",
+    }).populate("sessionId");
+
+    // Sort by session startAt after population
+    bookings.sort(
+      (a, b) => new Date(b.sessionId.startAt) - new Date(a.sessionId.startAt)
+    );
 
     console.log("user found for bookings:", bookings);
     const modifiedBookings = await utils.formatAgendaBookings(bookings);
@@ -72,10 +77,11 @@ const updateBookingStatus = async (bookingId, user) => {
   try {
     const booking = await Booking.findById(bookingId);
     console.log("booking found:", booking);
+    if (!booking) return null;
 
     if (user.role === "student" && user._id !== booking.userId.toString()) {
       console.log("Unauthorized access. Not your booking");
-      return null;
+      return 403;
     }
 
     booking.status = "canceled";
@@ -85,6 +91,7 @@ const updateBookingStatus = async (bookingId, user) => {
       "bookings"
     );
     console.log("session found:", session);
+    if (!session) return null;
 
     // remove booking from session
     session.bookings.pull(bookingId);

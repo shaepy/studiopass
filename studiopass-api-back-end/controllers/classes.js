@@ -40,7 +40,9 @@ router.get("/:sessionId", optionalVerifyToken, async (req, res) => {
 router.get("/:sessionId/bookings", verifyToken, async (req, res) => {
   try {
     if (req.user.role === "student") {
-      return res.status(403).send("You do not have permissions to do that.");
+      return res
+        .status(403)
+        .json({ error: "Forbidden. You do not have permission." });
     }
     const session = await sessionDb.getSessionById(req.params.sessionId);
     res.status(200).json(session);
@@ -53,10 +55,9 @@ router.get("/:sessionId/bookings", verifyToken, async (req, res) => {
 router.post("/", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).json({
-        error: "Forbidden",
-        details: "You do not have permissions to do that.",
-      });
+      return res
+        .status(403)
+        .json({ error: "Forbidden. You do not have permission." });
     }
     // * only allow instructors to be selected on front-end from drop-down (username)
     const newSession = await sessionDb.createSession(req.body);
@@ -73,10 +74,9 @@ router.post("/", verifyToken, async (req, res) => {
 router.put("/:sessionId", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).json({
-        error: "Forbidden",
-        details: "You do not have permissions to do that.",
-      });
+      return res
+        .status(403)
+        .json({ error: "Forbidden. You do not have permission." });
     }
     const updatedSession = await sessionDb.updateSessionData(
       req.params.sessionId,
@@ -92,10 +92,9 @@ router.put("/:sessionId", verifyToken, async (req, res) => {
 router.put("/:sessionId/instructor", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).json({
-        error: "Forbidden",
-        details: "You do not have permissions to do that.",
-      });
+      return res
+        .status(403)
+        .json({ error: "Forbidden. You do not have permission." });
     }
     const updatedSession = await sessionDb.updateSessionInstructor(
       req.params.sessionId,
@@ -112,20 +111,18 @@ router.put("/:sessionId/instructor", verifyToken, async (req, res) => {
 router.put("/:sessionId/cancel", verifyToken, async (req, res) => {
   try {
     if (req.user.role === "student") {
-      return res.status(403).json({
-        error: "Forbidden",
-        details: "You do not have permissions to do that.",
-      });
+      return res
+        .status(403)
+        .json({ error: "Forbidden. You do not have permission." });
     }
     const canceledSession = await sessionDb.cancelSession(
       req.params.sessionId,
       req.user
     );
     if (!canceledSession) {
-      return res.status(403).json({
-        error: "Forbidden",
-        details: "You do not have permissions to do that.",
-      });
+      return res
+        .status(403)
+        .json({ error: "Forbidden. You do not have permission." });
     }
     res.status(200).json(canceledSession);
   } catch (err) {
@@ -137,10 +134,9 @@ router.put("/:sessionId/cancel", verifyToken, async (req, res) => {
 router.delete("/:sessionId", verifyToken, async (req, res) => {
   try {
     if (req.user.role !== "owner") {
-      return res.status(403).json({
-        error: "Forbidden",
-        details: "You do not have permissions to do that.",
-      });
+      return res
+        .status(403)
+        .json({ error: "Forbidden. You do not have permission." });
     }
     await sessionDb.deleteSession(req.params.sessionId);
     res.status(200).json({ message: "Session deleted successfully." });
@@ -165,7 +161,6 @@ router.post("/:sessionId/bookings", verifyToken, async (req, res) => {
     } else if (newBooking === "maxCapacityReached") {
       return res.status(409).json({
         error: "Cannot book reservation; the class is already full.",
-        details: "Session at max capacity",
       });
     } else if (newBooking === "Unauthorized") {
       return res.status(403).json({

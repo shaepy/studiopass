@@ -12,6 +12,7 @@ import Loading from "./components/Loading/Loading";
 import ClassPage from "./components/ClassPage/ClassPage";
 import SessionForm from "./components/SessionForm/SessionForm";
 import * as sessionApi from "./services/sessionService";
+import * as agendaApi from "./services/agendaService";
 
 function App() {
   const navigate = useNavigate();
@@ -20,11 +21,10 @@ function App() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const handleAddBooking = async (sessionId, userId) => {
-    console.log("Book was clicked. Let's create a booking.");
-    const res = await sessionApi.createBooking(sessionId, userId);
-    console.log("api response returned", res);
-    if (res.status === 403) {
-      return setErrorMsg(res.data.error);
+    const newBooking = await sessionApi.createBooking(sessionId, userId);
+    console.log("handleAddBooking API response:", newBooking);
+    if (newBooking.status === 403) {
+      return setErrorMsg(newBooking.data.error); // eventually will not need
     }
     navigate("/agenda");
   };

@@ -25,9 +25,14 @@ router.put("/:bookingId", verifyToken, async (req, res) => {
       req.user
     );
     console.log("removedBooking is:", removedBooking);
-    res.status(200).json(removedBooking, {
-      message: "Successfully canceled booking and removed from session.",
-    });
+    if (!removedBooking) {
+      return res.status(404).json({ error: "Not found." });
+    } else if (removedBooking === 403) {
+      return res.status(403).json({
+        error: "Forbidden. You do not have permission.",
+      });
+    }
+    res.status(200).json({ message: "Successfully cancelled booking." });
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
