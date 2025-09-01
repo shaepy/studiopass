@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { signUp } from "../../services/authService";
 import { UserContext } from "../../contexts/UserContext";
+import styles from "./SignUpForm.module.css";
 
 const SignUpForm = () => {
   const [searchParams] = useSearchParams();
@@ -53,10 +54,10 @@ const SignUpForm = () => {
   };
 
   return (
-    <main>
+    <main className={styles.container}>
       <section>
         <form onSubmit={handleSubmit}>
-          <h1>Sign Up</h1>
+          <h1>Create an Account</h1>
           <p>{message}</p>
           <div>
             <label htmlFor="confirm">Email</label>

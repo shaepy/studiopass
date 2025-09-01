@@ -43,6 +43,17 @@ const addUserReservedStatus = async (session, userId) => {
   }
 };
 
+// TODO-ST Add reservation status for sessions list
+const addReservedStatusToSessions = async (sessions, userId) => {
+  try {
+    //
+  } catch (err) {
+    throw new Error(
+      "Error something went wrong with adding reserved status on sessions"
+    );
+  }
+};
+
 module.exports = {
   addUserReservedStatus,
   getAllUsers,

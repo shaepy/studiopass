@@ -2,10 +2,12 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import { signIn } from "../../services/authService";
 import { UserContext } from "../../contexts/UserContext";
+import styles from "./SignInForm.module.css";
 
 const SignInForm = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext);
+  // TODO-ST: need to display message when error signing in
   const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
     username: "",
@@ -29,13 +31,13 @@ const SignInForm = () => {
   };
 
   return (
-    <main>
+    <main className={styles.container}>
       <section>
         <form autoComplete="off" onSubmit={handleSubmit}>
           <h1>Sign In</h1>
           <p>{message}</p>
           <div>
-            <label htmlFor="email">Username:</label>
+            <label htmlFor="email">Username</label>
             <input
               type="text"
               autoComplete="off"
@@ -47,7 +49,7 @@ const SignInForm = () => {
             />
           </div>
           <div>
-            <label htmlFor="password">Password:</label>
+            <label htmlFor="password">Password</label>
             <input
               type="password"
               autoComplete="off"

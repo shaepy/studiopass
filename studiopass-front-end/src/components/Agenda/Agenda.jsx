@@ -30,15 +30,17 @@ const Agenda = () => {
   if (user.role === "student") {
     return (
       <main className={styles.container}>
-        <h1>Upcoming</h1>
-        {agenda.length > 0 ? (
-          <p>Here are your current reservations.</p>
-        ) : (
-          <p>
-            Go to our <Link to="/schedule">class schedule</Link> and book a
-            class.
-          </p>
-        )}
+        <header className={styles.agendaHeader}>
+          <h1>Upcoming</h1>
+          {agenda.length > 0 ? (
+            <p>Here are your current reservations.</p>
+          ) : (
+            <p>
+              Go to our <Link to="/schedule">class schedule</Link> and book a
+              class.
+            </p>
+          )}
+        </header>
         <section>
           {agenda.map((booking) => (
             <article key={booking._id}>

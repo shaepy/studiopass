@@ -107,7 +107,7 @@ router.put("/:sessionId/instructor", verifyToken, async (req, res) => {
 });
 
 // PUT - CANCEL SESSION - /classes/:sessionId/cancel
-// updates the session status to 'canceled'
+// FIX  ! DO NOT NEED THIS ROUTE //
 router.put("/:sessionId/cancel", verifyToken, async (req, res) => {
   try {
     if (req.user.role === "student") {

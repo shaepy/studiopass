@@ -1,9 +1,30 @@
 .container article {
   border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  align-items: center;
+}
+
+.container article header {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
 }
 
 .container section {
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: 20px;
+}
+
+.studentActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+h1 {
+  margin: 10px;
 }

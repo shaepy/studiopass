@@ -1,6 +1,5 @@
 import { useState, useContext, useEffect } from "react";
 import { Routes, Route, useNavigate } from "react-router";
-import "./App.css";
 import { UserContext } from "./contexts/UserContext";
 import NavBar from "./components/NavBar/NavBar";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
@@ -8,11 +7,11 @@ import SignInForm from "./components/SIgnInForm/SignInForm";
 import Schedule from "./components/Schedule/Schedule";
 import Agenda from "./components/Agenda/Agenda";
 import Landing from "./components/Landing/Landing";
-import Loading from "./components/Loading/Loading";
 import ClassPage from "./components/ClassPage/ClassPage";
 import SessionForm from "./components/SessionForm/SessionForm";
+import UserProfile from "./components/UserProfile/UserProfile";
 import * as sessionApi from "./services/sessionService";
-import * as agendaApi from "./services/agendaService";
+import "./App.css";
 
 function App() {
   const navigate = useNavigate();
@@ -27,6 +26,13 @@ function App() {
       return setErrorMsg(newBooking.data.error); // eventually will not need
     }
     navigate("/agenda");
+  };
+
+  const handleDeleteSession = async (sessionId) => {
+    console.log("handleDeleteSession called:");
+    const sessionMod = await sessionApi.deleteSession(sessionId);
+    console.log("sessionModified:", sessionMod);
+    navigate("/schedule");
   };
 
   return (
@@ -47,17 +53,19 @@ function App() {
         />
         <Route
           path="/schedule/:sessionId"
-          element={<ClassPage handleAddBooking={handleAddBooking} />}
+          element={
+            <ClassPage
+              handleAddBooking={handleAddBooking}
+              handleDeleteSession={handleDeleteSession}
+            />
+          }
         />
         <Route path="/agenda" element={<Agenda />} />
 
         {/* Admin-only routes (Instructor & Owner) */}
         {user && (user.role === "owner" || user.role === "instructor") && (
           <>
-            <Route
-              path="/users/:userId"
-              element={<p>User page under construction</p>}
-            />
+            <Route path="/users/:userId" element={<UserProfile />} />
           </>
         )}
 

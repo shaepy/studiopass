@@ -7,7 +7,7 @@ const utils = require("../utils/serverUtils");
 
 const getSessions = async () => {
   try {
-    const sessions = await Session.find({})
+    const sessions = await Session.find({ status: "scheduled" })
       .populate(["instructorId", "bookings"])
       .sort({ startAt: "asc" });
     const formattedSessions = await utils.formatSessions(sessions);

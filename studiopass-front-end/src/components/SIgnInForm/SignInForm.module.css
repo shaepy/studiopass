@@ -1,0 +1,24 @@
+.container form div {
+  display: flex;
+  flex-direction: column;
+}
+
+.container form div label {
+  font-weight: 500;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+input {
+  width: 100%;
+  max-width: 180px;
+  min-height: 26px;
+}
+
+button {
+  margin: 5px;
+}

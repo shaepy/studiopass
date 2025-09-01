@@ -65,13 +65,29 @@ export const createBooking = async (sessionId, userId) => {
   try {
     const res = await axios.post(
       `${BASE_URL}/${sessionId}/bookings`,
-      { sessionId: sessionId, userId: userId },
+      {},
       {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       }
     );
     if (!res.data) {
       throw new Error("Error something went wrong creating the session");
+    }
+    return res.data;
+  } catch (err) {
+    console.log(err);
+    return err.response;
+  }
+};
+
+// DELETE A SESSION
+export const deleteSession = async (sessionId) => {
+  try {
+    const res = await axios.delete(`${BASE_URL}/${sessionId}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+    if (!res.data) {
+      throw new Error("Error something went wrong deleting the session");
     }
     return res.data;
   } catch (err) {

@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router";
 import * as sessionApi from "../../services/sessionService";
 import styles from "./ClassPage.module.css";
 
-const ClassPage = ({ handleAddBooking }) => {
+const ClassPage = ({ handleAddBooking, handleDeleteSession }) => {
   const { user } = useContext(UserContext);
   const { sessionId } = useParams();
   const [session, setSession] = useState(null);
@@ -24,22 +24,32 @@ const ClassPage = ({ handleAddBooking }) => {
     return (
       <main className={styles.container}>
         <header>
-          <h1>{session.title}</h1>
-          <h2>
-            {session.month} {session.day}, {session.year} • {session.startTime}{" "}
-            - {session.endTime}
-          </h2>
+          <div>
+            <h1>{session.title}</h1>
+            <h2>
+              {session.month} {session.day}, {session.year} •{" "}
+              {session.startTime} - {session.endTime}
+            </h2>
+          </div>
           <h2>with {session.instructorName}</h2>
         </header>
-        <p>{session.description}</p>
-        <p>
-          Registered: {session.bookings.length}/{session.capacity}
-        </p>
-        {user.role === "owner" && (
-          <>
-            <Link to={`/schedule/${session._id}/edit`}>Edit</Link>
-          </>
-        )}
+        <section>
+          <div>
+            <p>{session.description}</p>
+            <p>
+              Registered: {session.bookings.length}/{session.capacity}
+            </p>
+          </div>
+          {user.role === "owner" && (
+            <>
+              <h3>Manage Class</h3>
+              <Link to={`/schedule/${session._id}/edit`}>Edit</Link>
+              <button onClick={() => handleDeleteSession(session._id)}>
+                Delete
+              </button>
+            </>
+          )}
+        </section>
         <section>
           <h3>Reserved</h3>
           {session.bookings.map((booking) => (

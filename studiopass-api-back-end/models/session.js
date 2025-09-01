@@ -23,7 +23,7 @@ const sessionSchema = mongoose.Schema({
   ],
   status: {
     type: String,
-    enum: ["scheduled", "canceled", "inactive"],
+    enum: ["scheduled", "inactive"],
     default: "scheduled",
     required: true,
   },
@@ -31,7 +31,6 @@ const sessionSchema = mongoose.Schema({
 
 sessionSchema.virtual("computedStatus").get(function () {
   const now = new Date();
-  if (this.status === "canceled") return "canceled";
   if (now < this.startAt) return "scheduled";
   return "inactive";
 });

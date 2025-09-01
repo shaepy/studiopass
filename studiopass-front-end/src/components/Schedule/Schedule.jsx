@@ -35,20 +35,20 @@ const Schedule = ({ handleAddBooking, errorMsg, setErrorMsg }) => {
                     {session.startTime} - {session.endTime}
                   </h3>
                 </div>
-                <div>
-                  <Link to={`/schedule/${session._id}`}>More Info</Link>
-                  {user &&
-                    user.role === "student" &&
-                    (session.bookings.length < session.capacity ? (
-                      <button
-                        onClick={() => handleAddBooking(session._id, user._id)}>
-                        Book
-                      </button>
-                    ) : (
-                      <button disabled>Full</button>
-                    ))}
-                </div>
               </header>
+              <div className={styles.studentActions}>
+                <Link to={`/schedule/${session._id}`}>More Info</Link>
+                {user &&
+                  user.role === "student" &&
+                  (session.bookings.length < session.capacity ? (
+                    <button
+                      onClick={() => handleAddBooking(session._id, user._id)}>
+                      Book
+                    </button>
+                  ) : (
+                    <button disabled>Full</button>
+                  ))}
+              </div>
               <div>
                 <p>Instructor: {session.instructorName}</p>
                 {user &&
