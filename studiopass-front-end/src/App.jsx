@@ -36,6 +36,10 @@ function App() {
     navigate("/schedule");
   };
 
+  const linkToClassPage = (sessionId) => {
+    navigate(`/schedule/${sessionId}`);
+  };
+
   return (
     <>
       <NavBar />
@@ -44,7 +48,12 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route
           path="/schedule"
-          element={<Schedule handleAddBooking={handleAddBooking} />}
+          element={
+            <Schedule
+              handleAddBooking={handleAddBooking}
+              linkToClassPage={linkToClassPage}
+            />
+          }
         />
         <Route
           path="/schedule/:sessionId"
@@ -55,7 +64,10 @@ function App() {
             />
           }
         />
-        <Route path="/agenda" element={<Agenda />} />
+        <Route
+          path="/agenda"
+          element={<Agenda linkToClassPage={linkToClassPage} />}
+        />
         <Route path="/about" element={<About />} />
 
         {/* Admin-only routes (Instructor & Owner) */}

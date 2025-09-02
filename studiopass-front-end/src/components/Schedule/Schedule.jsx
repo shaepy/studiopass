@@ -1,13 +1,14 @@
 import { UserContext } from "../../contexts/UserContext";
 import { useState, useContext, useEffect } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import * as sessionApi from "../../services/sessionService";
 import styles from "./Schedule.module.css";
 import BalletImage from "../../assets/img/ballet-jump.webp";
 
-const Schedule = ({ handleAddBooking }) => {
+const Schedule = ({ handleAddBooking, linkToClassPage }) => {
   const [sessions, setSessions] = useState([]);
   const { user } = useContext(UserContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchAllSessions = async () => {
@@ -46,7 +47,9 @@ const Schedule = ({ handleAddBooking }) => {
               </div>
             </header>
             <div className={styles.studentActions}>
-              <Link to={`/schedule/${session._id}`}>More Info</Link>
+              <button onClick={() => linkToClassPage(session._id)}>
+                View Class
+              </button>
               {user &&
                 user.role === "student" &&
                 (session.reservedStatus ? (

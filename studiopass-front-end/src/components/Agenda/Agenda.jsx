@@ -4,7 +4,7 @@ import { Link } from "react-router";
 import { UserContext } from "../../contexts/UserContext";
 import styles from "./Agenda.module.css";
 
-const Agenda = () => {
+const Agenda = ({ linkToClassPage }) => {
   const { user } = useContext(UserContext);
   const [agenda, setAgenda] = useState([]);
 
@@ -48,7 +48,7 @@ const Agenda = () => {
       <main className={styles.container}>
         <header className={styles.agendaHeader}>
           <h1>Upcoming</h1>
-          <p>Here are your current reservations.</p>
+          <p>Here’s your upcoming schedule.</p>
         </header>
         <section>
           {agenda.map((booking) => (
@@ -78,6 +78,7 @@ const Agenda = () => {
     return (
       <main className={styles.container}>
         <h1>Upcoming</h1>
+        <p>Here’s your upcoming schedule.</p>
         <section>
           {agenda.map((session) => (
             <article
@@ -93,7 +94,9 @@ const Agenda = () => {
                 <p>
                   {session.bookings.length}/{session.capacity} registered.
                 </p>
-                <Link to={`/schedule/${session._id}`}>Manage Class</Link>
+                <button onClick={() => linkToClassPage(session._id)}>
+                  Manage Class
+                </button>
               </div>
             </article>
           ))}

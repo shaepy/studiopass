@@ -50,10 +50,10 @@ const NavBar = () => {
             <Link to="/schedule">Class Schedule</Link>
           </li>
           <li>
-            <Link to="/sign-up">Register as New Client</Link>
+            <Link to="/sign-up">New Student</Link>
           </li>
           <li>
-            <Link to="/sign-up?role=instructor">Register as Staff</Link>
+            <Link to="/sign-up?role=instructor">Staff Sign Up</Link>
           </li>
           <li>
             <Link to="/sign-in">Sign In</Link>
