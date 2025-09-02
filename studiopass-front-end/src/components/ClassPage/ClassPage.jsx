@@ -2,7 +2,8 @@ import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../../contexts/UserContext";
 import { useParams, Link } from "react-router";
 import * as sessionApi from "../../services/sessionService";
-import styles from "./ClassPage.module.css";
+import adminStyles from "./ClassPageAdmin.module.css";
+import studentStyles from "./ClassPageStudent.module.css";
 
 const ClassPage = ({ handleAddBooking, handleDeleteSession }) => {
   const { user } = useContext(UserContext);
@@ -18,14 +19,19 @@ const ClassPage = ({ handleAddBooking, handleDeleteSession }) => {
     fetchSession();
   }, [sessionId]);
 
-  if (!session) return <p>Loading...</p>;
+  if (!session)
+    return (
+      <main className={adminStyles.container}>
+        <p>Loading...</p>
+      </main>
+    );
 
   if (user && (user.role === "instructor" || user.role === "owner")) {
     return (
-      <main className={styles.container}>
+      <main className={adminStyles.container}>
         <header>
           <div>
-            <h1>{session.title}</h1>
+            <h1 className={adminStyles.nonCursive}>{session.title}</h1>
             <h2>
               {session.month} {session.day}, {session.year} •{" "}
               {session.startTime} - {session.endTime}
@@ -34,27 +40,24 @@ const ClassPage = ({ handleAddBooking, handleDeleteSession }) => {
           <h2>with {session.instructorName}</h2>
         </header>
         <section>
-          <div>
-            <p>{session.description}</p>
-            <p>
-              Registered: {session.bookings.length}/{session.capacity}
-            </p>
-          </div>
+          <p className={adminStyles.description}>{session.description}</p>
           {user.role === "owner" && (
-            <>
+            <div className={adminStyles.manageClass}>
               <h3>Manage Class</h3>
-              <Link to={`/schedule/${session._id}/edit`}>Edit</Link>
+              <Link to={`/schedule/${session._id}/edit`}>Edit Class</Link>
               <button onClick={() => handleDeleteSession(session._id)}>
                 Delete
               </button>
-            </>
+            </div>
           )}
         </section>
         <section>
-          <h3>Reserved</h3>
+          <h3>
+            Reserved {session.bookings.length}/{session.capacity}
+          </h3>
           {session.bookings.map((booking) => (
             <ul key={booking._id}>
-              <li>
+              <li className={adminStyles.reservedList}>
                 <Link to={`/users/${booking.userId._id}`}>
                   {booking.userId.firstName} {booking.userId.lastName}
                 </Link>
@@ -66,19 +69,23 @@ const ClassPage = ({ handleAddBooking, handleDeleteSession }) => {
     );
   } else {
     return (
-      <main>
-        <h1>{session.title}</h1>
+      <main className={studentStyles.container}>
+        <h1 className={adminStyles.nonCursive}>{session.title}</h1>
         <h2>
           {session.month} {session.day}, {session.year} • {session.startTime} -{" "}
           {session.endTime}
         </h2>
         <h2>with {session.instructorName}</h2>
-        <p>{session.description}</p>
+        <p className={studentStyles.description}>{session.description}</p>
         {user &&
-          (session.reserved ? (
-            <button disabled>Reserved</button>
+          (session.reservedStatus ? (
+            <button disabled className={studentStyles.disabledButton}>
+              Reserved
+            </button>
           ) : session.bookings.length >= session.capacity ? (
-            <button disabled>Full</button>
+            <button disabled className={studentStyles.disabledButton}>
+              Full
+            </button>
           ) : (
             <button onClick={() => handleAddBooking(session._id, user._id)}>
               Book

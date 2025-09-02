@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import * as userApi from "../../services/userService";
 import * as sessionApi from "../../services/sessionService";
+import styles from "./SessionForm.module.css";
 
 const initialState = {
   title: "",
@@ -59,15 +60,15 @@ const SessionForm = () => {
     } else {
       const newSession = await sessionApi.create(formData);
       console.log("newSession created:", newSession);
-      navigate("/schedule");
+      navigate(`/schedule/${newSession._id}`);
     }
   };
 
   return (
     <>
-      <main>
+      <main className={styles.container}>
         <h1>{sessionId ? "Edit Session" : "Create New Session"}</h1>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className={styles.card}>
           <div>
             <label>Title</label>
             <input

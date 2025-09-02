@@ -4,7 +4,11 @@ const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/classes`;
 // GET ALL SESSIONS
 export const index = async () => {
   try {
-    const res = await axios.get(BASE_URL);
+    const headers = {};
+    const token = localStorage.getItem("token");
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await axios.get(BASE_URL, { headers });
     if (!res.data) {
       throw new Error("Error something went wrong fetching all sessions");
     }

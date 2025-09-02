@@ -10,6 +10,7 @@ import Landing from "./components/Landing/Landing";
 import ClassPage from "./components/ClassPage/ClassPage";
 import SessionForm from "./components/SessionForm/SessionForm";
 import UserProfile from "./components/UserProfile/UserProfile";
+import About from "./components/About/About";
 import * as sessionApi from "./services/sessionService";
 import "./App.css";
 
@@ -43,13 +44,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route
           path="/schedule"
-          element={
-            <Schedule
-              handleAddBooking={handleAddBooking}
-              errorMsg={errorMsg}
-              setErrorMsg={setErrorMsg}
-            />
-          }
+          element={<Schedule handleAddBooking={handleAddBooking} />}
         />
         <Route
           path="/schedule/:sessionId"
@@ -61,6 +56,7 @@ function App() {
           }
         />
         <Route path="/agenda" element={<Agenda />} />
+        <Route path="/about" element={<About />} />
 
         {/* Admin-only routes (Instructor & Owner) */}
         {user && (user.role === "owner" || user.role === "instructor") && (

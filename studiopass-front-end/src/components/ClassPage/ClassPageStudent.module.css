@@ -1,0 +1,32 @@
+.container ul {
+  list-style: none;
+}
+
+.container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+}
+
+.description {
+  width: 80%;
+  text-align: center;
+}
+
+button.disabledButton {
+  background-color: #dadada;
+}
+
+h1.nonCursive {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 2.6rem;
+}

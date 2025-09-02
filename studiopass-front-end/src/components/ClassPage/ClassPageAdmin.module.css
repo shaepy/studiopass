@@ -1,0 +1,49 @@
+.container ul {
+  list-style: none;
+}
+
+main.container {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+}
+
+.manageClass {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.description {
+  text-align: center;
+}
+
+section {
+  display: flex;
+  gap: 10px;
+}
+
+li.reservedList a {
+  color: #785461;
+}
+
+li.reservedList a:hover {
+  color: #a37b8a;
+}
+
+h1.nonCursive {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 2.6rem;
+}

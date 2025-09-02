@@ -7,8 +7,7 @@
   position: fixed;
   padding: 14px 21px;
   align-items: center;
-  background: white;
-  border-bottom: 1px solid rgb(200, 200, 200);
+  background: #785461;
 }
 
 .container ul {
@@ -19,6 +18,14 @@
   font-weight: bold;
   align-items: center;
   justify-content: flex-end;
+}
+
+li a {
+  color: #fff;
+}
+
+li a:hover {
+  color: #fff;
 }
 
 .container li {

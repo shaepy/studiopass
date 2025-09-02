@@ -27,23 +27,34 @@ const Agenda = () => {
 
   if (!agenda) return <p>Loading...</p>;
 
+  if (agenda.length < 1) {
+    return (
+      <main className={styles.container}>
+        <h1>Upcoming</h1>
+        {user.role === "student" ? (
+          <p>
+            Go to our <Link to="/schedule">class schedule</Link> and book a
+            class.
+          </p>
+        ) : (
+          <p>You have no assigned classes.</p>
+        )}
+      </main>
+    );
+  }
+
   if (user.role === "student") {
     return (
       <main className={styles.container}>
         <header className={styles.agendaHeader}>
           <h1>Upcoming</h1>
-          {agenda.length > 0 ? (
-            <p>Here are your current reservations.</p>
-          ) : (
-            <p>
-              Go to our <Link to="/schedule">class schedule</Link> and book a
-              class.
-            </p>
-          )}
+          <p>Here are your current reservations.</p>
         </header>
         <section>
           {agenda.map((booking) => (
-            <article key={booking._id}>
+            <article
+              className={`${styles.agendaArticle} ${styles.card}`}
+              key={booking._id}>
               <header>
                 <h2>{booking.sessionId.title}</h2>
               </header>
@@ -69,7 +80,9 @@ const Agenda = () => {
         <h1>Upcoming</h1>
         <section>
           {agenda.map((session) => (
-            <article key={session._id}>
+            <article
+              className={`${styles.agendaArticle} ${styles.card}`}
+              key={session._id}>
               <header>
                 <h2>{session.title}</h2>
               </header>

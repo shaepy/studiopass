@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { signIn } from "../../services/authService";
 import { UserContext } from "../../contexts/UserContext";
 import styles from "./SignInForm.module.css";
@@ -32,9 +32,9 @@ const SignInForm = () => {
 
   return (
     <main className={styles.container}>
-      <section>
-        <form autoComplete="off" onSubmit={handleSubmit}>
-          <h1>Sign In</h1>
+      <section className={styles.signInForm}>
+        <h1>Sign In</h1>
+        <form autoComplete="off" onSubmit={handleSubmit} className={styles.card}>
           <p>{message}</p>
           <div>
             <label htmlFor="email">Username</label>
@@ -65,6 +65,9 @@ const SignInForm = () => {
             <button onClick={() => navigate("/")}>Cancel</button>
           </div>
         </form>
+        <p>
+          Don't have an account? <Link to="/sign-up">Sign Up here.</Link>
+        </p>
       </section>
     </main>
   );

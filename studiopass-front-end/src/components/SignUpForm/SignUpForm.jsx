@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams, Link } from "react-router";
 import { signUp } from "../../services/authService";
 import { UserContext } from "../../contexts/UserContext";
 import styles from "./SignUpForm.module.css";
@@ -55,9 +55,9 @@ const SignUpForm = () => {
 
   return (
     <main className={styles.container}>
-      <section>
-        <form onSubmit={handleSubmit}>
-          <h1>Create an Account</h1>
+      <section className={styles.signUpForm}>
+        <h1>Create an Account</h1>
+        <form onSubmit={handleSubmit} className={styles.card}>
           <p>{message}</p>
           <div>
             <label htmlFor="confirm">Email</label>
@@ -126,10 +126,17 @@ const SignUpForm = () => {
             />
           </div>
           <div>
-            <button disabled={isFormInvalid()}>Sign Up</button>
+            <button
+              disabled={isFormInvalid()}
+              className={isFormInvalid() ? styles.disabledButton : ""}>
+              Sign Up
+            </button>
             <button onClick={() => navigate("/")}>Cancel</button>
           </div>
         </form>
+        <p>
+          Already have an account? <Link to="/sign-in">Sign In here.</Link>
+        </p>
       </section>
     </main>
   );

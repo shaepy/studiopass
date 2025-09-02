@@ -9,10 +9,17 @@ const bookingDb = require("../queries/bookingDb");
 // STRETCH GOALS: filter query (by instructor, by date)
 
 // GET - ALL SESSIONS - /classes
-router.get("/", async (req, res) => {
+router.get("/", optionalVerifyToken, async (req, res) => {
   try {
-    const schedule = await sessionDb.getSessions();
-    res.status(200).json(schedule);
+    let sessions;
+    if (req.user) {
+      console.log("req.user found");
+      sessions = await sessionDb.getSessions(req.user);
+    } else {
+      console.log("req.user not found");
+      sessions = await sessionDb.getSessions();
+    }
+    res.status(200).json(sessions);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }

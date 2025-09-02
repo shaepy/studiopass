@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -8,13 +10,19 @@
   height: 100%;
 }
 
+.landing-bg {
+  background-image: url("../src/assets/img/ballet-class.jpg");
+  background-size: cover;
+  min-height: 100%;
+}
+
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #785461;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #a37b8a;
 }
 
 html,
@@ -25,16 +33,44 @@ body {
 }
 
 body {
+  background-color: #f3f1ee;
   overflow: auto;
   padding-top: 80px;
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
+  letter-spacing: 0.02rem;
   font-weight: 400;
+}
+
+main {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 h1 {
-  font-size: 2.8rem;
+  font-family: "Dancing Script", cursive;
+  font-size: 4.5rem;
+}
+
+input,
+select,
+textarea {
+  border-radius: 5px;
+  letter-spacing: 0.03rem;
+  border: 1px solid rgb(194, 194, 194);
+  width: 100%;
+  max-width: 220px;
+  min-width: 120px;
+  min-height: 32px;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  padding: 5px;
+}
+
+textarea {
+  min-height: 80px;
+  max-width: 300px;
 }
 
 button {
@@ -45,10 +81,11 @@ button {
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: background-color 0.25s;
+  color: #ffffff;
 }
 button:hover {
-  border-color: #646cff;
+  background-color: #9B6F7F;
 }
 button:focus,
 button:focus-visible {
@@ -61,9 +98,9 @@ button:focus-visible {
     background-color: #ffffff;
   }
   a:hover {
-    color: #747bff;
+    color: #9B6F7F;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #785461;
   }
 }

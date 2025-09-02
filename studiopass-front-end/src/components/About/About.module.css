@@ -1,0 +1,14 @@
+.container section {
+  width: 78%;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+div.aboutUsParagraph {
+  margin-top: 20px;
+}

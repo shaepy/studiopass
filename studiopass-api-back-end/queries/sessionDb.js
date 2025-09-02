@@ -2,15 +2,26 @@ const Session = require("../models/session");
 const Booking = require("../models/booking");
 const User = require("../models/user");
 const utils = require("../utils/serverUtils");
+const userDb = require("./userDb");
 
 // TODO-ST: prevention for not being able to create something new, scheduled in the past
 
-const getSessions = async () => {
+const getSessions = async (user) => {
   try {
     const sessions = await Session.find({ status: "scheduled" })
       .populate(["instructorId", "bookings"])
       .sort({ startAt: "asc" });
     const formattedSessions = await utils.formatSessions(sessions);
+
+    if (user && user.role === "student") {
+      const modifiedSessions = await userDb.addReservedStatusToSessions(
+        formattedSessions,
+        user._id
+      );
+      console.log("modifiedSessions with reserved status:", modifiedSessions);
+      return modifiedSessions;
+    }
+
     return formattedSessions;
   } catch (err) {
     console.log(err);

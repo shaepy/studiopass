@@ -19,6 +19,9 @@ const NavBar = () => {
             <Link to="/">Home</Link>
           </li>
           <li>
+            <Link to="/about">About Us</Link>
+          </li>
+          <li>
             <Link to="/agenda">My Agenda</Link>
           </li>
           <li>
@@ -41,13 +44,16 @@ const NavBar = () => {
             <Link to="/">Home</Link>
           </li>
           <li>
+            <Link to="/about">About Us</Link>
+          </li>
+          <li>
             <Link to="/schedule">Class Schedule</Link>
           </li>
           <li>
-            <Link to="/sign-up">Sign Up as New Client</Link>
+            <Link to="/sign-up">Register as New Client</Link>
           </li>
           <li>
-            <Link to="/sign-up?role=instructor">Sign Up as Staff</Link>
+            <Link to="/sign-up?role=instructor">Register as Staff</Link>
           </li>
           <li>
             <Link to="/sign-in">Sign In</Link>
