@@ -52,9 +52,15 @@ const ClassPage = ({ handleAddBooking, handleDeleteSession }) => {
           )}
         </section>
         <section>
-          <h3>
-            Reserved {session.bookings.length}/{session.capacity}
-          </h3>
+          {session.bookings.length > 0 ? (
+            <h3>
+              Reserved {session.bookings.length}/{session.capacity}
+            </h3>
+          ) : (
+            <p>
+              <strong>No reservations yet.</strong>
+            </p>
+          )}
           {session.bookings.map((booking) => (
             <ul key={booking._id}>
               <li className={adminStyles.reservedList}>

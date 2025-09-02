@@ -44,7 +44,7 @@ article.agendaArticle {
   margin: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.14);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  max-width: 620px;
+  max-width: 550px;
 }
 
 .card:hover {

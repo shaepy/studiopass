@@ -1,11 +1,7 @@
-import { UserContext } from "../../contexts/UserContext";
-import { useContext } from "react";
-import { Link } from "react-router";
 import styles from "./About.module.css";
 import BalletPhoto from "../../assets/img/ballet-group.jpg";
 
 const About = () => {
-  const { user } = useContext(UserContext);
   return (
     <main className={styles.container}>
       <section>

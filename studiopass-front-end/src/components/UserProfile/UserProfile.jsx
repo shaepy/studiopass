@@ -22,7 +22,7 @@ const UserProfile = () => {
   }
 
   return (
-    <main>
+    <main className={styles.userProfileMain}>
       <header>
         <h1>
           {user.firstName} {user.lastName}
@@ -47,7 +47,7 @@ const UserProfile = () => {
               booking.status === "active" &&
               booking.sessionId.status === "scheduled" && (
                 <>
-                  <article key={booking._id}>
+                  <article key={booking._id} className={styles.card}>
                     <header>
                       <h4>{booking.sessionId.title}</h4>
                       <p>Date/Time {booking.sessionId.startAt}</p>

@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import {  useContext } from "react";
 import { Routes, Route, useNavigate } from "react-router";
 import { UserContext } from "./contexts/UserContext";
 import NavBar from "./components/NavBar/NavBar";
@@ -17,8 +17,6 @@ import "./App.css";
 function App() {
   const navigate = useNavigate();
   const { user } = useContext(UserContext);
-  console.log("User signed in", user);
-  const [errorMsg, setErrorMsg] = useState("");
 
   const handleAddBooking = async (sessionId, userId) => {
     const newBooking = await sessionApi.createBooking(sessionId, userId);
