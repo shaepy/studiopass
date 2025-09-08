@@ -34,12 +34,11 @@ body {
 }
 
 body {
-  background-color: #f3f1ee;
+  background-color: #ffffff;
   overflow: auto;
   padding-top: 80px;
   font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  letter-spacing: 0.02rem;
   font-weight: 400;
 }
 
@@ -52,7 +51,11 @@ main {
 
 h1 {
   font-family: "Dancing Script", cursive;
-  font-size: 4.5rem;
+  font-size: 3.6rem;
+}
+
+h2 {
+  font-size: 1.4rem;
 }
 
 input,

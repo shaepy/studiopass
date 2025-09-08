@@ -67,7 +67,7 @@ const SessionForm = () => {
   return (
     <>
       <main className={styles.container}>
-        <h1>{sessionId ? "Edit Session" : "Create New Session"}</h1>
+        <h1>{sessionId ? "Edit Session" : "Add New Class"}</h1>
         <form onSubmit={handleSubmit} className={styles.card}>
           <div>
             <label>Title</label>

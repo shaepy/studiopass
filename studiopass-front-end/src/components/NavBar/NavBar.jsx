@@ -29,7 +29,7 @@ const NavBar = () => {
           </li>
           {user.role === "owner" && (
             <li>
-              <Link to="/admin/new-session">New Session</Link>
+              <Link to="/admin/new-session">Add Class</Link>
             </li>
           )}
           <li>

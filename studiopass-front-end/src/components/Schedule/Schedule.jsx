@@ -40,10 +40,12 @@ const Schedule = ({ handleAddBooking, linkToClassPage }) => {
             <header>
               <div>
                 <h2>{session.title}</h2>
-                <h3>
-                  {session.weekday}, {session.month} {session.day} •{" "}
+                <p>
+                  {session.weekday}, {session.month} {session.day}
+                </p>
+                <p>
                   {session.startTime} - {session.endTime}
-                </h3>
+                </p>
               </div>
             </header>
             <div className={styles.studentActions}>

@@ -89,7 +89,7 @@ const Agenda = ({ linkToClassPage }) => {
               </header>
               <div>
                 <p>
-                  {session.startDate}• {session.startTime} - {session.endTime}
+                  {session.startDate} • {session.startTime} - {session.endTime}
                 </p>
                 <p>
                   {session.bookings.length}/{session.capacity} registered.
