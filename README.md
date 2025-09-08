@@ -2,19 +2,17 @@
 
 StudioPass is a full-stack MERN (MongoDB, Express, React, Node.js) application for managing studio classes and bookings with robust role-based access.
 
-<img height="500" alt="student-home" src="https://github.com/user-attachments/assets/6d9b9180-e8dd-4c5b-9734-38ae8b1c6562" />
+<img width="600" alt="student-home" src="https://github.com/user-attachments/assets/6d9b9180-e8dd-4c5b-9734-38ae8b1c6562" />
 
 This demo is styled for a ballet studio, but the system is flexible and can be adapted for any type of studio or class-based business.
 
 ## Overview
 With a background as a fitness and dance instructor, I have worked with many studios and small businesses that rely on booking systems to manage classes, instructors, and students. I chose to build StudioPass to explore how these systems function from the ground up and to challenge myself to design one from scratch. The project also serves as inspiration for creating booking platforms for studio owners I know in my community.
 
-<img width="500" alt="student-schedule-header" src="https://github.com/user-attachments/assets/38ccf83e-8d49-41f6-81ea-6710a8e8cea6" />
-<img width="500" alt="student-schedule" src="https://github.com/user-attachments/assets/17ef3642-1ff7-4a80-abaf-f4b0e66cf2f4" />
+<img width="600" alt="student-schedule" src="https://github.com/user-attachments/assets/38ccf83e-8d49-41f6-81ea-6710a8e8cea6" />
 
 ##  Features
-
-<img width="500" alt="owner-add-class" src="https://github.com/user-attachments/assets/5d19e9c2-0d73-4950-9beb-e162baec6f06" />
+<img width="600" alt="owner-class-page" src="https://github.com/user-attachments/assets/2f991d16-a214-41a7-8cb6-8f52c452d7e2" />
 
 - **Role-Based Access Control**  
   - **Owners** can create and manage studios, instructors, and class schedules.  
