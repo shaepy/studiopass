@@ -6,12 +6,7 @@ StudioPass is a full-stack MERN (MongoDB, Express, React, Node.js) application f
 
 <img width="600" alt="student-home" src="https://github.com/user-attachments/assets/6d9b9180-e8dd-4c5b-9734-38ae8b1c6562" />
 
-| Admin Credentials |
-|------------------|
-| Username: shae |
-| Password: secret |
-
-Use the Admin Credentials if needing to test out features for role of "owner". This demo is styled for a ballet studio, but the system is flexible and can be adapted for any type of studio or class-based business.
+This demo is styled for a ballet studio, but the system is flexible and can be adapted for any type of studio or class-based business.
 
 ## Overview
 With a background as a fitness and dance instructor, I have worked with many studios and small businesses that rely on booking systems to manage classes, instructors, and students. I chose to build StudioPass to explore how these systems function from the ground up and to challenge myself to design one from scratch. The project also serves as inspiration for creating booking platforms for studio owners I know in my community.
