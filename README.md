@@ -4,7 +4,7 @@
 
 StudioPass is a full-stack MERN (MongoDB, Express, React, Node.js) application for managing studio classes and bookings with robust role-based access.
 
-<img width="650" alt="student-landing" src="https://github.com/user-attachments/assets/70b992c8-d896-4839-a3cd-b7f08840902e" />
+<img width="650" alt="unauth-user-home" src="https://github.com/user-attachments/assets/2a1b2326-2c4b-4383-a6dd-867aa64e7ddc" />
 
 This demo is styled for a ballet studio, but the system is flexible and can be adapted for any type of studio or class-based business. Use the login credentials below for existing instructor/owner accounts.
 
@@ -18,9 +18,9 @@ With a background as a fitness and dance instructor, I have worked with many stu
 
 <img width="650" alt="student-schedule" src="https://github.com/user-attachments/assets/7cf47705-c543-479e-97b6-aef8cb7a386d" />
 
-
 ##  Features
-<img width="650" alt="owner-class-page" src="https://github.com/user-attachments/assets/624da1a5-bff0-4092-ac09-9c84ac783266" />
+
+<img width="650" alt="owner-class-page" src="https://github.com/user-attachments/assets/645cf7dc-8545-4c8b-98ec-4d46ab60d976" />
 
 - **Role-Based Access Control**  
   - **Owners** can create and manage studios, instructors, and class schedules.  
@@ -56,7 +56,7 @@ Role-based checks provide differentiated access and views for owners, instructor
 | **Hosting / Deployment** | Heroku |
 | **External Tools** | Mongoose, Axios |
 
-Live Repositories:
+#### Live Repositories:
 - [StudioPass Front-End](https://github.com/shaepy/studiopass-front-end)
 - [StudioPass Back-End](https://github.com/shaepy/studiopass-back-end)
 
