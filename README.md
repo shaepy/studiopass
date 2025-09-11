@@ -11,7 +11,7 @@ This demo is styled for a ballet studio, but the system is flexible and can be a
 | Account Role | Username | Password |
 |--------------|----------|----------|
 | Instructor   | jojo     | secret   |
-| Owner        | shae     | secret   |
+| Owner        | sarah     | secret   |
 
 ## Overview
 With a background as a fitness and dance instructor, I have worked with many studios and small businesses that rely on booking systems to manage classes, instructors, and students. I chose to build StudioPass to explore how these systems function from the ground up and to challenge myself to design one from scratch. The project also serves as inspiration for creating booking platforms for studio owners I know in my community.
